@@ -9,8 +9,6 @@ import hre from 'hardhat'
 import dotenv from 'dotenv'
 dotenv.config()
 
-//npx hardhat run scripts/mint-nft.mjs --network polygon_mumbai
-
 const app = express();
 
 const API_KEY = process.env.NFT_STORAGE_API_KEY
