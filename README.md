@@ -1,13 +1,10 @@
-# Sample Hardhat Project
+# Cover the Remix Backend
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This project demonstrates deploying a complicated smart contract using Polygon and NFT Storage for the Metabolism Hackathon! The goal of this backend is to allow musicians and artists a streamlined way to sell IP access to create covers and remixes of their tracks!
 
-Try running some of the following tasks:
+
+Getting Started:
 
 ```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+
 ```
