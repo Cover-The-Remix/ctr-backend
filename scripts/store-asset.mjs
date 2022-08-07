@@ -5,15 +5,15 @@ dotenv.config()
 
 const API_KEY = process.env.NFT_STORAGE_API_KEY
 
-async function storeAsset() {
+export async function storeAsset(name, description, image) {
    const client = new NFTStorage({ token: API_KEY })
    const metadata = await client.store({
-       name: 'ExampleNFT',
-       description: 'My ExampleNFT is an awesome artwork!',
+       name: name,
+       description: description,
        image: new File(
-           [await fs.promises.readFile('assets/MyExampleNFT.jpg')],
-           'MyExampleNFT.jpg',
-           { type: 'image/jpg' }
+           [await fs.promises.readFile(image)],
+           image.name,
+           image.mimeType
        ),
    })
    console.log("Metadata stored on Filecoin and IPFS with URL:", metadata.url)

@@ -1,11 +1,20 @@
-const express = require('express');
-const fileUpload = require('express-fileupload');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const _ = require('lodash');
+import { NFTStorage, File } from "nft.storage"
+import express from 'express'
+import fileUpload from 'express-fileupload'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import morgan from 'morgan'
+import _ from 'lodash'
+import hre from 'hardhat'
+import dotenv from 'dotenv'
+dotenv.config()
+
+//npx hardhat run scripts/mint-nft.mjs --network polygon_mumbai
 
 const app = express();
+
+const API_KEY = process.env.NFT_STORAGE_API_KEY
+const contractAddress = "0x0CC88dd26F8b14300DD69bBe7e5E7a74FbC3beBd"
 
 // enable files upload
 app.use(fileUpload({
@@ -37,7 +46,20 @@ app.post('/mint-nft-image', async (req, res) => {
             
             nft.mv('./uploads/' + nft.name);
 
-            //send response
+            const client = new NFTStorage({ token: API_KEY })
+            const imageFile = new File([ nft.data ], nft.name, { type: nft.mimetype })
+            const metadata = await client.store({
+                name: req.body.name,
+                description: req.body.description,
+                image: imageFile,
+            })
+            console.log("Metadata stored on Filecoin and IPFS with URL:", metadata.url)
+
+            const CtRNFT = await hre.ethers.getContractFactory("CtRNFT")
+            const [owner] = await hre.ethers.getSigners()
+            await CtRNFT.attach(contractAddress).mintNFT(owner.address, metadata.url)
+            console.log("NFT minted to: ", owner.address)
+
             res.send({
                 status: true,
                 message: 'File is uploaded',
@@ -47,6 +69,7 @@ app.post('/mint-nft-image', async (req, res) => {
                     size: nft.size
                 }
             });
+
         }
     } catch (err) {
         res.status(500).send(err);
